@@ -19,6 +19,7 @@ import shutil
 import pandas as pd
 
 from fastapi import APIRouter, Depends, File, HTTPException, Query, Response, UploadFile, status
+from app.utils.analysis import run_analysis
 
 from app.utils.cohort_filter import filtered_cohort
 
@@ -38,7 +39,7 @@ async def test() -> dict:
     description="Upload a dataset to the Azure File Share",
     status_code=status.HTTP_200_OK,
 )
-def run_analysis(
+def analysis(
     cohort : dict,
     analysis : dict,
 ):

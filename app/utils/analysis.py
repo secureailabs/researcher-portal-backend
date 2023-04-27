@@ -18,7 +18,7 @@ def paired_t_test(
 def run_analysis(df, analysis: dict):
     """Run analysis on the cohort"""
     # Run analysis on the cohort
-    if analysis["analysis_type"] == "paired_t_test":
+    if analysis["type"] == "paired_t_test":
         return paired_t_test(df[analysis["parameter"]["series_name_0"]], df[analysis["parameter"]["series_name_1"]])
     else:
         raise Exception("Analysis type not supported")

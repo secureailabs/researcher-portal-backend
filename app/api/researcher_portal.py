@@ -25,8 +25,11 @@ from app.utils.cohort_filter import filtered_cohort
 
 router = APIRouter()
 
-df1 = pd.read_csv("/Users/amantrig/Documents/Work/SAIL/researcher-portal-backend/app/api/data_frame_0.csv")
-df2 = pd.read_csv("/Users/amantrig/Documents/Work/SAIL/researcher-portal-backend/app/api/data_frame_1.csv")
+# temp code to load the data frame
+file_path_0 = os.path.dirname(os.path.realpath(__file__)) + "/data_frame_0.csv"
+file_path_1 = os.path.dirname(os.path.realpath(__file__)) + "/data_frame_1.csv"
+df1 = pd.read_csv(file_path_0)
+df2 = pd.read_csv(file_path_1)
 df = pd.concat([df1, df2])
 
 @router.get("/demo/test")

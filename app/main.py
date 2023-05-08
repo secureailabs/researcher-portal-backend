@@ -60,9 +60,6 @@ class ValidationError(BaseModel):
     error: StrictStr = Field(default="Invalid Schema")
 
 
-# utils.validation_error_response_definition = ValidationError.schema()
-
-
 @server.exception_handler(RequestValidationError)
 async def validation_exception_handler(request, exc):
     error = ValidationError(error="Invalid Schema")

@@ -7,10 +7,10 @@ run:
 	@uvicorn app.main:server --reload
 
 build_image:
-	@./scripts.sh build_image dataupload
+	@./scripts.sh build_image researcherportal
 
 push_image: build_image
-	@./scripts.sh push_image_to_registry dataupload
-
+	@./scripts.sh push_image_to_registry researcherportal
+	
 generate_client:
 	@./scripts.sh generate_client

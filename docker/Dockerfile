@@ -1,7 +1,7 @@
 FROM ubuntu:20.04
 
 ENV TZ=America/Toronto
-LABEL authors="prawal@secureailabs.com"
+LABEL authors="amanl@secureailabs.com"
 USER root
 
 # Set time zone data

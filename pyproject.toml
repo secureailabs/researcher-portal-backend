@@ -12,6 +12,7 @@ fastapi = "^0.95.1"
 uvicorn = "^0.21.1"
 scipy = "^1.10.1"
 pandas = "^2.0.1"
+statsmodels = "^0.14.0"
 
 
 [build-system]

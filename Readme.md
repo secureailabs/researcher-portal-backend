@@ -1,5 +1,6 @@
 # Install dependencies
 
+poetry shell
 poetry install
 
 # TO RUN THE DEV SERVER LOCALLY

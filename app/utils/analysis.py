@@ -6,13 +6,24 @@ from statsmodels.formula.api import ols
 
 from app.models.cohort import Cohort
 from app.utils.cohort_filter import filtered_cohort
+from sail_data_layer.csvv1_dataset_serializer import Csvv1DatasetSerializer
 
 # temp code to load the data frame
-file_path_0 = os.path.dirname(os.path.realpath(__file__)) + "/data_frame_0.csv"
-file_path_1 = os.path.dirname(os.path.realpath(__file__)) + "/data_frame_1.csv"
-df1 = pd.read_csv(file_path_0)
-df2 = pd.read_csv(file_path_1)
-df = pd.concat([df1, df2])
+# file_path_0 = os.path.dirname(os.path.realpath(__file__)) + "/data_frame_0.csv"
+# file_path_1 = os.path.dirname(os.path.realpath(__file__)) + "/data_frame_1.csv"
+# df1 = pd.read_csv(file_path_0)
+# df2 = pd.read_csv(file_path_1)
+# df = pd.concat([df1, df2])
+
+serializer_init = Csvv1DatasetSerializer()
+
+# read dataset from path ../../data/dataset_id
+dataset = serializer_init.read_dataset_for_path(
+    os.path.dirname(os.path.realpath(__file__))
+    + "/../../data/8b54a57a-c186-4a25-b43e-9927ea6ae296"
+)
+
+df = dataset[0]
 
 sample_cohort_dict = {
     "filter": [
@@ -23,8 +34,12 @@ sample_cohort_dict = {
 }
 
 
-def paired_t_test(params):
-    """Paired t-test"""
+# Write a function to perform a welch's t-test
+def welch_t_test(params):
+    """
+    Welch's t-test
+    Description : Welch's t-test, or unequal variances t-test, is a two-sample location test which is used to test the hypothesis that two populations have equal means.
+    """
     cohort = params["cohort"]
     series_name_list = params["series_name_list"]
 
@@ -32,10 +47,80 @@ def paired_t_test(params):
     filtered_df = filtered_cohort(df, cohort)
 
     stat, p = ttest_ind(
+        filtered_df[series_name_list[0]],
+        filtered_df[series_name_list[1]],
+        equal_var=False,
+    )
+
+    return {"stat": stat, "p": p}
+
+
+def paired_t_test(params):
+    """Paired t-test"""
+    cohort = params["cohort"]
+    series_name_list = params["series_name_list"]
+
+    # print origin length of df
+    print("origin length of df: ", len(df))
+
+    #  get the cohort
+    filtered_df = filtered_cohort(df, cohort)
+
+    # print length of filtered df
+    print("length of filtered df: ", len(filtered_df))
+
+    stat, p = ttest_ind(
         filtered_df[series_name_list[0]], filtered_df[series_name_list[1]]
     )
 
     return {"stat": stat, "p": p}
+
+
+def skew(params):
+    """Skew"""
+    cohort = params["cohort"]
+    series_name = params["series_name"]
+
+    #  get the cohort
+    filtered_df = filtered_cohort(df, cohort)
+    print("====================================")
+    print("filtered_df", filtered_df)
+
+    skew = filtered_df[series_name].skew()
+
+    print("skew: ", skew)
+
+    return {"skew": skew}
+
+
+def chi_square(params):
+    """Chi Square"""
+    cohort = params["cohort"]
+    series_name = params["series_name"]
+
+    #  get the cohort
+    filtered_df = filtered_cohort(df, cohort)
+
+    # get the unique values in the series
+    unique_values = filtered_df[series_name].unique()
+
+    # get the counts of each unique value
+    value_counts = filtered_df[series_name].value_counts()
+
+    # get the total count of the series
+    total_count = len(filtered_df[series_name])
+
+    # get the expected value
+    expected_value = total_count / len(unique_values)
+
+    # calculate the chi square value
+    chi_square = 0
+    for value in unique_values:
+        chi_square += (value_counts[value] - expected_value) ** 2 / expected_value
+
+    print("chi_square: ", chi_square)
+
+    return {"res": {"chi_square": chi_square}}
 
 
 def anova(params):
@@ -81,8 +166,8 @@ analysis_function_list = {
     "paired_t_test": {
         "display_name": "Paired t-test",
         "description": "Paired t-test",
-        "function": "paired_t_test",
-        "parameter": {
+        "function": paired_t_test,
+        "parameterRequired": {
             "series_name_list": ["series_name_1", "series_name_2"],
             "cohort": sample_cohort_dict,
         },
@@ -90,10 +175,37 @@ analysis_function_list = {
     "anova": {
         "display_name": "ANOVA",
         "description": "ANOVA",
-        "function": "anova",
-        "parameter": {
+        "function": anova,
+        "parameterRequired": {
             "cohort_list": [sample_cohort_dict],
             "series_name": "series_name_1",
+        },
+    },
+    "welch_t_test": {
+        "display_name": "Welch's t-test",
+        "description": "Welch's t-test",
+        "function": welch_t_test,
+        "parameterRequired": {
+            "series_name_list": ["series_name_1", "series_name_2"],
+            "cohort": sample_cohort_dict,
+        },
+    },
+    "skew": {
+        "display_name": "Skew",
+        "description": "Skew",
+        "function": skew,
+        "parameterRequired": {
+            "series_name": "series_name_1",
+            "cohort": sample_cohort_dict,
+        },
+    },
+    "chi_square": {
+        "display_name": "Chi Square",
+        "description": "Chi Square",
+        "function": chi_square,
+        "parameterRequired": {
+            "series_name": "series_name_1",
+            "cohort": sample_cohort_dict,
         },
     },
 }
@@ -102,5 +214,8 @@ analysis_function_list = {
 def run_analysis(type, input_params: dict):
     """Run analysis on the cohort"""
     # Run analysis on the cohort
-    analysis_function = analysis_funcion_map[analysis_function_list[type]["function"]]
-    return analysis_function(input_params)
+    analysis_function = analysis_function_list[type]
+    print("analysis_function: ", analysis_function)
+    print("input_params: ", input_params)
+    res = analysis_function["function"](input_params)
+    return res

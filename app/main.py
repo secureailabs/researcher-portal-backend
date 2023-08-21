@@ -27,7 +27,7 @@ from fastapi.staticfiles import StaticFiles
 # from fastapi_responses import custom_openapi
 from pydantic import BaseModel, Field, StrictStr
 
-from app.api import researcher_portal
+from app.api import pag_dashoard, researcher_portal
 
 server = FastAPI(
     title="sail-dataset-upload",
@@ -44,6 +44,7 @@ origins = [
 
 # Add all the API services here exposed to the public
 server.include_router(researcher_portal.router)
+server.include_router(pag_dashoard.router, prefix="/pag")
 
 server.add_middleware(
     CORSMiddleware,

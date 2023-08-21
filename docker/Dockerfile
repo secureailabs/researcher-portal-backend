@@ -11,23 +11,26 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN apt-get update && \
   apt-get -y upgrade && \
   apt-get install -y \
-  nginx \
   wget \
   curl \
   sudo \
   git \
   build-essential \
   python3-pip \
-  jq
+  jq \
+  unzip \
+  cifs-utils \
+  zip
 
 COPY docker/requirements.txt /requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY docker/nginx.conf /etc/nginx/nginx.conf
-
+# COPY docker/decrypt_file.py /decrypt_file.py
 COPY docker/Entrypoint.sh /Entrypoint.sh
+
 RUN chmod +x /Entrypoint.sh
 
 COPY app /app
+COPY sail_data_layer /sail_data_layer
 
 ENTRYPOINT [ "/Entrypoint.sh" ]

@@ -84,6 +84,58 @@ class Csvv1DatasetSerializer(BaseDatasetSerializer):
         #     data_model_tabular,
         # )
 
+    def read_dataset_for_path_pag(self, path_dir_dataset_source: str) -> any:
+        # TODO check signature
+
+        path_file_dataset_header = os.path.join(
+            path_dir_dataset_source, "dataset_header.json"
+        )
+        path_file_data_model_zip = os.path.join(
+            path_dir_dataset_source, "data_model.zip"
+        )
+        path_file_data_content_zip = os.path.join(
+            path_dir_dataset_source, "data_content.zip"
+        )
+        with open(path_file_dataset_header, "r") as file:
+            header_dataset = json.load(file)
+        data_federation_id = header_dataset["data_federation_id"]
+        data_federation_name = header_dataset["data_federation_name"]
+        dataset_id = header_dataset["dataset_id"]
+        dataset_name = header_dataset["dataset_name"]
+
+        # unzip path_file_data_content_zip and return the content as pandas dataframe
+        # TODO check header
+        with ZipFile(path_file_data_content_zip) as archive_data_content:
+            list_data_frame = []
+            for name_file in archive_data_content.namelist():
+                print("=================")
+                print("name file", name_file)
+                if not name_file.endswith(".csv"):
+                    raise Exception()
+                data_frame_name = name_file.split(".csv")[0]
+                if data_frame_name == "static_data_table_pag":
+                    data_frame = pandas.read_csv(
+                        BytesIO(archive_data_content.read(name_file))
+                    )
+                    list_data_frame.append(data_frame)
+
+        return list_data_frame
+
+        # # TODO check header
+        # with ZipFile(path_file_data_model_zip) as archive_data_model:
+        #     data_model_tabular = TabularDatasetDataModel.from_dict(
+        #         json.loads(archive_data_model.read("data_model.json"))
+        #     )
+
+        # return self.read_dataset_for_data_content_zip(
+        #     data_federation_id,
+        #     data_federation_name,
+        #     dataset_id,
+        #     dataset_name,
+        #     path_file_data_content_zip,
+        #     data_model_tabular,
+        # )
+
     def read_dataset_for_data_content_zip(
         self,
         data_federation_id: str,

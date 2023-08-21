@@ -1,4 +1,5 @@
 import os
+import json
 from scipy.stats import ttest_ind
 import pandas as pd
 import statsmodels.api as sm
@@ -17,10 +18,17 @@ from sail_data_layer.csvv1_dataset_serializer import Csvv1DatasetSerializer
 
 serializer_init = Csvv1DatasetSerializer()
 
+f = open(
+    os.path.dirname(os.path.realpath(__file__)) + "/../../InitializationVector.json",
+    "r",
+)
+iv = json.loads(f.read())
+
+data_set_id_first = iv["datasets"][0]["id"]
+
 # read dataset from path ../../data/dataset_id
 dataset = serializer_init.read_dataset_for_path(
-    os.path.dirname(os.path.realpath(__file__))
-    + "/../../data/8b54a57a-c186-4a25-b43e-9927ea6ae296"
+    os.path.dirname(os.path.realpath(__file__)) + f"/../../data/{data_set_id_first}"
 )
 
 df = dataset[0]

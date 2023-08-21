@@ -1,0 +1,24 @@
+{
+  "secure_computation_node_id": "c067b554-0118-41c6-b68b-02f52f1cbbf2",
+  "dataset_storage_password": "X/uIVwCJ1pcB0bA9RKaIhJ/IqwvqpgO3bUTYYSd6pICmJYKd2DnD1I2NvX8R9UVMW/2ASSXZg1ee+ASt9FW82w==",
+  "storage_account_name": "saildatastorage90588",
+  "datasets": [
+    {
+      "id": "8b54a57a-c186-4a25-b43e-9927ea6ae296",
+      "version_id": "fde34714-ade5-4b9f-800a-6b27a7b4b259",
+      "data_owner_id": "0237acc7-b15f-439f-ad89-7db74a577ce1",
+      "key": "dMjd0ae8Z2O52/kPWs0gX4OSbZy/G2viRqSceNmmLjs="
+    },
+    {
+      "id": "49634f0c-df0b-40c7-9d7e-ab96aa98b0b2",
+      "version_id": "629659fd-da91-43e3-8f94-6f13d275d008",
+      "data_owner_id": "55ec91bd-03f3-4ebf-9195-1266a3bb4fbd",
+      "key": "KyQmB6hUc7au2enjIX/rwNnA8fA03LVNWUkY0BySs7E="
+    }
+  ],
+  "researcher_id": "f15ba6f2-6eab-4f68-8b03-a9d8438be19b",
+  "researcher_user_id": "180879ae-2533-4fd1-8ba5-51399a862fcc",
+  "data_federation_id": "3ed75306-0adf-4770-b02f-c81db56b3d8f",
+  "version": "feb6c24a",
+  "audit_service_ip": "172.20.100.16"
+}

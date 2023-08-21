@@ -25,7 +25,7 @@ RUN apt-get update && \
 COPY docker/requirements.txt /requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# COPY docker/decrypt_file.py /decrypt_file.py
+COPY docker/decrypt_file.py /decrypt_file.py
 COPY docker/Entrypoint.sh /Entrypoint.sh
 
 RUN chmod +x /Entrypoint.sh

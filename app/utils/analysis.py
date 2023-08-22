@@ -21,14 +21,13 @@ from sail_data_layer.csvv1_dataset_serializer import Csvv1DatasetSerializer
 
 serializer_init = Csvv1DatasetSerializer()
 
-# f = open(
-#     os.path.dirname(os.path.realpath(__file__)) + "/../../InitializationVector.json",
-#     "r",
-# )
-# iv = json.loads(f.read())
+f = open(
+    os.path.dirname(os.path.realpath(__file__)) + "/../../InitializationVector.json",
+    "r",
+)
+iv = json.loads(f.read())
 
-# data_set_id_first = iv["datasets"][0]["id"]
-data_set_id_first = "8b54a57a-c186-4a25-b43e-9927ea6ae296"
+data_set_id_first = iv["datasets"][0]["id"]
 
 # read dataset from path ../../data/dataset_id
 dataset = serializer_init.read_dataset_for_path(

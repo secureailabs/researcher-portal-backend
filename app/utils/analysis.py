@@ -4,6 +4,9 @@ from scipy.stats import ttest_ind
 import pandas as pd
 import statsmodels.api as sm
 from statsmodels.formula.api import ols
+import plotly.graph_objects as go
+import plotly.io as pio
+
 
 from app.models.cohort import Cohort
 from app.utils.cohort_filter import filtered_cohort
@@ -18,13 +21,14 @@ from sail_data_layer.csvv1_dataset_serializer import Csvv1DatasetSerializer
 
 serializer_init = Csvv1DatasetSerializer()
 
-f = open(
-    os.path.dirname(os.path.realpath(__file__)) + "/../../InitializationVector.json",
-    "r",
-)
-iv = json.loads(f.read())
+# f = open(
+#     os.path.dirname(os.path.realpath(__file__)) + "/../../InitializationVector.json",
+#     "r",
+# )
+# iv = json.loads(f.read())
 
-data_set_id_first = iv["datasets"][0]["id"]
+# data_set_id_first = iv["datasets"][0]["id"]
+data_set_id_first = "8b54a57a-c186-4a25-b43e-9927ea6ae296"
 
 # read dataset from path ../../data/dataset_id
 dataset = serializer_init.read_dataset_for_path(
@@ -68,6 +72,9 @@ def paired_t_test(params):
     cohort = params["cohort"]
     series_name_list = params["series_name_list"]
 
+    print("====================================")
+    print("series_name_list: ", series_name_list)
+
     # print origin length of df
     print("origin length of df: ", len(df))
 
@@ -81,7 +88,30 @@ def paired_t_test(params):
         filtered_df[series_name_list[0]], filtered_df[series_name_list[1]]
     )
 
-    return {"stat": stat, "p": p}
+    data1 = filtered_df[series_name_list[0]]
+    data2 = filtered_df[series_name_list[1]]
+
+    # Create histograms for both datasets
+    trace1 = go.Histogram(x=data1, name=series_name_list[0], opacity=0.5)
+    trace2 = go.Histogram(x=data2, name=series_name_list[1], opacity=0.5)
+
+    # Create the layout
+    layout = go.Layout(
+        title="Distribution of eGFR Values Before and After Surgery",
+        xaxis=dict(title="eGFR Value"),
+        yaxis=dict(title="Frequency"),
+        barmode="overlay",  # Overlay histograms
+    )
+    # set width and height
+    layout["width"] = 800
+    layout["height"] = 600
+
+    # Create the figure using px.histogram
+    fig = go.Figure(data=[trace1, trace2], layout=layout)
+
+    fig_json = json.loads(pio.to_json(fig))
+
+    return {"stat": stat, "p": p, "plot": fig_json}
 
 
 def skew(params):
@@ -92,7 +122,6 @@ def skew(params):
     #  get the cohort
     filtered_df = filtered_cohort(df, cohort)
     print("====================================")
-    print("filtered_df", filtered_df)
 
     skew = filtered_df[series_name].skew()
 
